@@ -351,7 +351,7 @@ const WORD_SETS = {
       {
         "term": "chunk",
         "meaning": [
-          "정보의 덩어리(단위)"
+          "정보의 덩어리"
         ],
         "synonyms": []
       },
