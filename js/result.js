@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const totalCount = parseInt(localStorage.getItem('totalCount') || '0');
   const wrongCount = parseInt(localStorage.getItem('wrongCount') || '0');
 
-  if (totalCount === 0) {
+  if (totalCount === 0 || localStorage.getItem('resultWordSet') !== ACTIVE_WORD_SET) {
     location.href = 'index.html';
     return;
   }
@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // 점수 표시
   const scoreDiv = document.getElementById('score');
   scoreDiv.innerHTML = `
-    총 <strong style="color: #059669;">${totalCount}</strong>개 문제 중 
+    총 <strong style="color: #059669;">${totalCount}</strong>개 문제 중
     <strong style="color: #dc2626;">${wrongCount}</strong>개 틀림
   `;
 
@@ -23,28 +23,22 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function retryWrong() {
-  const wrongList = JSON.parse(localStorage.getItem('wrongList') || '[]');
-  
+  const wrongList = getSavedWrongWords();
+
   if (wrongList.length === 0) {
     alert('틀린 문제가 없습니다!');
     return;
   }
 
-  // wrongList가 제대로 저장되어 있는지 확인
-  console.log('오답 목록:', wrongList);
-
   // 오답 복습 모드로 설정
-  localStorage.setItem('wordSet', 'retry_' + Date.now());
-  
+  localStorage.setItem('wordSet', 'retry_quiz2');
+
   // mode가 없으면 기본값 설정
   let mode = localStorage.getItem('mode');
   if (!mode) {
     mode = 'en-ko';
     localStorage.setItem('mode', mode);
   }
-
-  console.log('설정 완료 - wordSet:', localStorage.getItem('wordSet'), ', mode:', mode);
-
   // 퀴즈 페이지로 이동
   location.href = 'quiz.html';
 }

@@ -5,6 +5,7 @@ let quizData = {
   modes: [],
   currentIndex: 0,
   wrongList: [],
+  answered: false,
   autoNextTimer: null
 };
 
@@ -20,8 +21,8 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // 오답 복습 모드 체크
-  if (wordSetKey.startsWith('retry_')) {
-    const wrongList = JSON.parse(localStorage.getItem('wrongList') || '[]');
+  if (wordSetKey === 'retry_quiz2') {
+    const wrongList = getSavedWrongWords();
     if (wrongList.length === 0) {
       alert('틀린 문제가 없습니다.');
       location.href = 'index.html';
@@ -29,29 +30,27 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     quizData.words = [...wrongList].sort(() => Math.random() - 0.5);
   } else {
-    // 일반 단어장 모드
-    if (!WORD_SETS[wordSetKey]) {
-      alert('단어장을 찾을 수 없습니다.');
-      location.href = 'index.html';
-      return;
-    }
-    const wordSet = WORD_SETS[wordSetKey];
+    const wordSet = getWordSet();
+    localStorage.setItem('wordSet', ACTIVE_WORD_SET);
     quizData.words = [...wordSet.words].sort(() => Math.random() - 0.5);
   }
 
-  quizData.modes = modeString.split(',');
-  
+  quizData.modes = modeString.split(',').filter(mode =>
+    ['en-ko', 'ko-en', 'synonym'].includes(mode)
+  );
+  if (!quizData.modes.length) quizData.modes = ['en-ko'];
+
   // 유사어 모드만 선택된 경우, 유사어가 있는 단어만 필터링
   if (quizData.modes.length === 1 && quizData.modes[0] === 'synonym') {
     quizData.words = quizData.words.filter(word => word.synonyms && word.synonyms.length > 0);
-    
+
     if (quizData.words.length === 0) {
       alert('유사어가 있는 단어가 없습니다. 다른 모드를 선택해주세요.');
       location.href = 'index.html';
       return;
     }
   }
-  
+
   quizData.currentIndex = 0;
   quizData.wrongList = [];
 
@@ -70,12 +69,9 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function handleSubmit() {
-  const submitBtn = document.getElementById('submit-btn');
-  const btnText = submitBtn.textContent.trim();
-  
-  if (btnText === '확인') {
+  if (!quizData.answered) {
     checkAnswer();
-  } else if (btnText === '다음') {
+  } else {
     if (quizData.autoNextTimer) {
       clearTimeout(quizData.autoNextTimer);
       quizData.autoNextTimer = null;
@@ -94,6 +90,7 @@ function showQuestion() {
 
   if (currentIndex >= words.length) {
     // 퀴즈 완료
+    localStorage.setItem('resultWordSet', ACTIVE_WORD_SET);
     localStorage.setItem('totalCount', words.length);
     localStorage.setItem('wrongCount', quizData.wrongList.length);
     localStorage.setItem('wrongList', JSON.stringify(quizData.wrongList));
@@ -102,7 +99,7 @@ function showQuestion() {
   }
 
   const word = words[currentIndex];
-  
+
   // 현재 모드 선택
   let currentMode;
   const availableModes = modes.filter(m => {
@@ -111,26 +108,26 @@ function showQuestion() {
     }
     return true;
   });
-  
+
   // 사용 가능한 모드가 없으면 단어 건너뛰기
   if (availableModes.length === 0) {
     quizData.currentIndex++;
     showQuestion();
     return;
   }
-  
+
   currentMode = availableModes[Math.floor(Math.random() * availableModes.length)];
 
   // 문제와 정답 설정
   let question, answers, modeBadgeText;
-  
+
   if (currentMode === 'en-ko') {
     question = word.term;
     answers = word.meaning;
     modeBadgeText = '영어 → 한국어';
   } else if (currentMode === 'ko-en') {
     question = word.meaning.join(', ');
-    answers = [word.term];
+    answers = [word.term, ...(word.synonyms || [])];
     modeBadgeText = '한국어 → 영어';
   } else if (currentMode === 'synonym') {
     // 유사어 모드 (이미 유사어가 있는 경우만 여기 도달)
@@ -141,6 +138,8 @@ function showQuestion() {
     modeBadgeText = '유사어 (영어 → 영어)';
   }
 
+  quizData.answered = false;
+
   // UI 업데이트
   document.getElementById('counter').textContent = `${currentIndex + 1} / ${words.length}`;
   document.getElementById('progress').style.width = `${((currentIndex + 1) / words.length) * 100}%`;
@@ -150,7 +149,7 @@ function showQuestion() {
   document.getElementById('answer').disabled = false;
   document.getElementById('result').innerHTML = '';
   document.getElementById('submit-btn').textContent = '확인';
-  
+
   // 입력창에 포커스
   setTimeout(() => {
     const answerInput = document.getElementById('answer');
@@ -165,6 +164,7 @@ function showQuestion() {
 }
 
 function checkAnswer() {
+  if (quizData.answered) return;
   const userAnswer = document.getElementById('answer').value.trim();
   const { currentAnswers, currentWord } = quizData;
 
@@ -173,11 +173,13 @@ function checkAnswer() {
     return;
   }
 
+  quizData.answered = true;
+
   // 모든 가능한 답 확장
   const expandedAnswers = currentAnswers.flatMap(ans => expandAnswers(ans));
 
   // 정답 체크 (대소문자 무시)
-  const isCorrect = expandedAnswers.some(ans => 
+  const isCorrect = expandedAnswers.some(ans =>
     ans.toLowerCase() === userAnswer.toLowerCase()
   );
 
@@ -215,7 +217,7 @@ function checkAnswer() {
   // 버튼을 "다음"으로 변경
   document.getElementById('answer').disabled = true;
   document.getElementById('submit-btn').textContent = '다음';
-  
+
   // 2초 후 자동으로 다음 문제로
   quizData.autoNextTimer = setTimeout(() => {
     quizData.autoNextTimer = null;
@@ -224,12 +226,13 @@ function checkAnswer() {
 }
 
 function nextQuestion() {
+  if (!quizData.answered) return;
   // 타이머가 있으면 취소
   if (quizData.autoNextTimer) {
     clearTimeout(quizData.autoNextTimer);
     quizData.autoNextTimer = null;
   }
-  
+
   quizData.currentIndex++;
   showQuestion();
 }
