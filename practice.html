@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>챕터 학습 · quiz2</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/learn.css">
+</head>
+<body>
+  <main class="container">
+    <div class="quiz-header learning-header">
+      <h1 id="chapter-title">챕터 학습</h1>
+      <span id="mastery-count" class="counter">학습 준비 중</span>
+    </div>
+    <p id="round-status" class="round-status" role="status"></p>
+    <div id="mastery-progress" class="progress-bar" role="progressbar" aria-label="맞힌 단어 수" aria-valuemin="0" aria-valuenow="0" aria-valuemax="10">
+      <div id="progress" class="progress" style="width:0%"></div>
+    </div>
+    <section id="practice-panel" class="card">
+      <div class="learning-question-header">
+        <span id="mode-badge" class="mode-badge"></span>
+        <span id="counter" class="counter"></span>
+      </div>
+      <h2 id="question" class="question"></h2>
+      <form id="answer-form" class="answer-area">
+        <label class="visually-hidden" for="answer">정답</label>
+        <input type="text" id="answer" placeholder="정답을 입력하세요" autocomplete="off" enterkeyhint="done" aria-describedby="result">
+        <button id="submit-btn" type="submit" class="btn-check">확인</button>
+      </form>
+      <button id="skip-btn" type="button" class="learning-skip">모르겠어요 · 정답 보기</button>
+      <div id="result" class="result-area" role="status"></div>
+    </section>
+    <section id="completion-panel" class="card result-card" hidden>
+      <div class="emoji" aria-hidden="true">🎉</div>
+      <h2 id="completion-title" tabindex="-1">챕터 학습 완료!</h2>
+      <p id="completion-detail" class="score-text"></p>
+      <a id="next-chapter" class="btn-primary learning-link" hidden>다음 챕터 학습</a>
+      <a href="learn.html" class="btn-secondary learning-link">다른 챕터 선택</a>
+    </section>
+    <p id="practice-error" class="learning-error" role="alert"></p>
+    <a href="learn.html" class="home-link">← 챕터 다시 선택</a>
+  </main>
+  <script src="./words/quiz2.js"></script>
+  <script src="./js/common.js"></script>
+  <script src="./js/learning.js"></script>
+  <script src="./js/practice.js"></script>
+</body>
+</html>

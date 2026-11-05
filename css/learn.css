@@ -1,0 +1,29 @@
+.learning-link { text-decoration: none; }
+[hidden] { display: none !important; }
+.chapter-fieldset, #learning-form fieldset { border: 0; min-width: 0; }
+#learning-form legend { color: #064e3b; font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; }
+.chapter-fieldset { margin-top: 30px; }
+.learning-note { color: #475569; font-size: .95rem; line-height: 1.7; margin-top: 15px; }
+.chapter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px; margin-top: 20px; }
+.chapter-card { display: grid; grid-template-columns: auto 1fr; align-content: start; gap: 10px; background: white; border: 2px solid #a7f3d0; border-radius: 16px; padding: 20px; cursor: pointer; }
+.chapter-card:has(input:checked) { border-color: #059669; background: #ecfdf5; box-shadow: 0 0 0 2px #059669; }
+.chapter-card:has(input:focus-visible) { outline: 3px solid #047857; outline-offset: 4px; }
+.chapter-card input { width: 20px; height: 20px; accent-color: #059669; }
+.chapter-card strong { color: #064e3b; font-size: 1.1rem; }
+.chapter-card span { grid-column: 2; color: #475569; line-height: 1.6; }
+.chapter-card .chapter-preview { font-size: .85rem; overflow-wrap: anywhere; }
+.chapter-unavailable { opacity: .55; cursor: not-allowed; }
+.learning-error { color: #991b1b; line-height: 1.6; margin-top: 15px; }
+.round-status { color: #047857; line-height: 1.7; margin-bottom: 16px; }
+.learning-header, .learning-question-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.learning-question-header .mode-badge { margin-bottom: 0; }
+.learning-skip { display: block; margin: 0 auto 20px; padding: 10px; background: none; border: none; color: #047857; font-size: 1rem; text-decoration: underline; cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.question { overflow-wrap: anywhere; }
+#answer { min-width: 0; }
+@media (max-width: 480px) {
+  .container { padding: 0; }
+  .card { padding: 22px; }
+  .header h1, .learning-header h1 { font-size: 1.7rem; }
+}

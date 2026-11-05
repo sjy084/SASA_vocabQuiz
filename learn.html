@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10개씩 반복 학습 · quiz2</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/learn.css">
+</head>
+<body>
+  <main class="container">
+    <div class="header"><h1>10개씩 반복 학습</h1></div>
+    <p class="subtitle">한 챕터씩 풀고, 틀린 단어는 모두 맞힐 때까지 반복해요.</p>
+    <form id="learning-form">
+      <section class="card">
+        <fieldset>
+          <legend>문제 방향</legend>
+          <div class="mode-options">
+            <label class="checkbox-label"><input type="checkbox" name="learn-mode" value="en-ko" checked>영어 → 한국어</label>
+            <label class="checkbox-label"><input type="checkbox" name="learn-mode" value="ko-en">한국어 → 영어</label>
+            <label class="checkbox-label"><input type="checkbox" name="learn-mode" value="synonym">유사어 (영어 → 영어)</label>
+          </div>
+        </fieldset>
+        <p class="learning-note">여러 방향을 선택하면 섞어서 출제합니다. 유사어만 선택하면 유사어가 있는 단어만 학습합니다.</p>
+      </section>
+      <fieldset class="chapter-fieldset">
+        <legend>학습할 챕터 선택</legend>
+        <p id="chapter-summary" class="learning-note"></p>
+        <div id="chapters" class="chapter-grid"></div>
+      </fieldset>
+      <p id="setup-message" class="learning-error" role="alert"></p>
+      <button id="start-learning" type="submit" class="btn-primary">선택한 챕터 학습 시작</button>
+    </form>
+    <a href="index.html" class="home-link">← 홈으로</a>
+  </main>
+  <script src="./words/quiz2.js"></script>
+  <script src="./js/common.js"></script>
+  <script src="./js/learning.js"></script>
+  <script src="./js/learn.js"></script>
+</body>
+</html>
