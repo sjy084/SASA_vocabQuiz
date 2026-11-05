@@ -60,14 +60,14 @@ function answerLearningQuestion(dontKnow = false) {
   practiceSession.recordAnswer(correct);
   input.disabled = true;
   document.getElementById('skip-btn').disabled = true;
-  document.getElementById('submit-btn').textContent = correct ? '다음' : '정답 확인했어요 · 다음';
+  document.getElementById('submit-btn').textContent = '다음';
   const feedback = document.createElement('div');
-  feedback.className = correct ? 'result-correct' : 'result-wrong';
-  feedback.textContent = correct ? '정답입니다!' : `정답: ${answers.join(', ')}. 이 단어는 이번 라운드가 끝나면 다시 나옵니다.`;
+  feedback.className = `${correct ? 'result-correct' : 'result-wrong'} learning-answer`;
+  feedback.textContent = answers.join(', ');
   document.getElementById('result').replaceChildren(feedback);
   updateLearningProgress();
   if (correct) practiceTimer = setTimeout(advanceLearningQuestion, 2000);
-  else document.getElementById('submit-btn').focus();
+  document.getElementById('submit-btn').focus();
 }
 
 function advanceLearningQuestion() {
@@ -105,6 +105,11 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('answer').addEventListener('keydown', event => {
     if (event.key === 'Enter' && event.isComposing) event.preventDefault();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Enter' || event.isComposing || practiceSession.completed || !practiceSession.awaitingAdvance) return;
+    event.preventDefault();
+    if (!event.repeat) advanceLearningQuestion();
   });
   document.getElementById('skip-btn').addEventListener('click', () => answerLearningQuestion(true));
   window.addEventListener('pagehide', () => clearTimeout(practiceTimer));

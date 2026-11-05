@@ -21,6 +21,7 @@
 button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .question { overflow-wrap: anywhere; }
+.learning-answer { font-size: 1.6rem; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }
 #answer { min-width: 0; }
 @media (max-width: 480px) {
   .container { padding: 0; }
